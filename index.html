@@ -33,8 +33,10 @@
 <p id="result"></p>
 
 <script>
-  const webhookUrl ="https://quyen123.app.n8n.cloud/webhook/4fe20500-e3fc-4d0d-9d5b-5d8fe4c1a33e
-";
+  // ✅ PRODUCTION WEBHOOK – BẮT BUỘC
+  const webhookUrl =
+    "https://quyen123.app.n8n.cloud/webhook/4fe20500-e3fc-4d0d-9d5b-5d8fe4c1a33e";
+
   document.getElementById("orderForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -56,9 +58,7 @@
         body: JSON.stringify(payload)
       });
 
-      if (!res.ok) {
-        throw new Error("Webhook trả về lỗi");
-      }
+      if (!res.ok) throw new Error("Webhook error");
 
       document.getElementById("result").innerText =
         "✅ Đặt hàng thành công!";
@@ -67,7 +67,7 @@
 
     } catch (err) {
       document.getElementById("result").innerText =
-        "❌ Gửi đơn thất bại – kiểm tra webhook n8n";
+        "❌ Đặt đơn thất bại – kiểm tra webhook n8n";
       console.error(err);
     }
   });
