@@ -1,6 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đặt hàng iPhone</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 40px;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      border-radius: 8px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
 <body>
-  <h1>Test GitHub Pages OK</h1>
+
+<h2 style="text-align:center">Đặt hàng iPhone</h2>
+
+<form id="orderForm">
+  <input type="text" name="ten" placeholder="Tên khách hàng" required>
+  <input type="text" name="sdt" placeholder="Số điện thoại" required>
+  <input type="text" name="dia_chi" placeholder="Địa chỉ" required>
+  <input type="text" name="san_pham" placeholder="Sản phẩm" required>
+  <input type="number" name="so_luong" placeholder="Số lượng" value="1" required>
+
+  <button type="submit">Đặt hàng</button>
+</form>
+
+<script>
+  const webhookURL = "https://quyendz123.app.n8n.cloud/webhook/dat-hang-iphone";
+
+  document.getElementById("orderForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    data.thoi_gian = new Date().toLocaleString("vi-VN");
+
+    await fetch(webhookURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    alert("Đặt hàng thành công!");
+    e.target.reset();
+  });
+</script>
+
 </body>
 </html>
+
