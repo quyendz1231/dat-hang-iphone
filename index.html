@@ -3,54 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <title>Đặt hàng iPhone</title>
+  <style>
+    body { font-family: Arial; max-width: 400px; margin: 40px auto; }
+    input, select, button {
+      width: 100%; padding: 8px; margin-bottom: 10px;
+    }
+    button { cursor: pointer; }
+  </style>
 </head>
 <body>
-  <h2>Đặt hàng iPhone</h2>
 
-  <form id="orderForm">
-    <input name="ten" placeholder="Tên khách" required><br><br>
-    <input name="sdt" placeholder="Số điện thoại" required><br><br>
-    <input name="dia_chi" placeholder="Địa chỉ" required><br><br>
+<h2>📱 Đặt hàng iPhone</h2>
 
-    <select name="san_pham">
-      <option value="iPhone 15 Pro">iPhone 15 Pro</option>
-      <option value="iPhone 15">iPhone 15</option>
-    </select><br><br>
+<form id="orderForm">
+  <input name="ten" placeholder="Tên khách" required>
+  <input name="sdt" placeholder="Số điện thoại" required>
+  <input name="dia_chi" placeholder="Địa chỉ" required>
 
-    <input name="so_luong" type="number" value="1" min="1"><br><br>
+  <select name="san_pham">
+    <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+    <option value="iPhone 15">iPhone 15</option>
+  </select>
 
-    <button type="submit">Đặt hàng</button>
-  </form>
+  <input name="so_luong" type="number" value="1" min="1">
 
-  <p id="result"></p>
+  <button type="submit">Đặt hàng</button>
+</form>
 
-  <script>
-    const webhookUrl = "https://quyen123.app.n8n.cloud/webhook/dat-hang-iphone";
+<p id="result"></p>
 
-    document.getElementById("orderForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+<script>
+  // ⚠️ BẮT BUỘC dùng Production Webhook (UUID)
+  const webhookUrl =
+    "https://quyen123.app.n8n.cloud/webhook/4fe20500-e3fc-4d0d-9d5b-5d8fe4c1a33e";
 
-      const form = e.target;
-      const data = {
-        ten: form.ten.value,
-        sdt: form.sdt.value,
-        dia_chi: form.dia_chi.value,
-        san_pham: form.san_pham.value,
-        so_luong: form.so_luong.value,
-        thoi_gian: new Date().toLocaleString("vi-VN")
-      };
+  document.getElementById("orderForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
+    const form = e.target;
+
+    const payload = {
+      ten: form.ten.value,
+      sdt: form.sdt.value,
+      dia_chi: form.dia_chi.value,
+      san_pham: form.san_pham.value,
+      so_luong: Number(form.so_luong.value),
+      thoi_gian: new Date().toISOString()
+    };
+
+    try {
       const res = await fetch(webhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify(payload)
       });
 
+      if (!res.ok) {
+        throw new Error("Webhook trả về lỗi");
+      }
+
       document.getElementById("result").innerText =
-        res.ok ? "✅ Đặt hàng thành công!" : "❌ Lỗi gửi đơn hàng";
-    });
-  </script>
+        "✅ Đặt hàng thành công!";
+
+      form.reset();
+
+    } catch (err) {
+      document.getElementById("result").innerText =
+        "❌ Gửi đơn thất bại – kiểm tra webhook n8n";
+      console.error(err);
+    }
+  });
+</script>
+
 </body>
 </html>
-
-
