@@ -3,67 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <title>Đặt hàng iPhone</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      padding: 40px;
-    }
-    form {
-      background: #fff;
-      padding: 20px;
-      max-width: 400px;
-      margin: auto;
-      border-radius: 8px;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-    }
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-  </style>
 </head>
 <body>
+  <h2>Đặt hàng iPhone</h2>
 
-<h2 style="text-align:center">Đặt hàng iPhone</h2>
+  <form id="orderForm">
+    <input name="ten" placeholder="Tên khách" required><br><br>
+    <input name="sdt" placeholder="Số điện thoại" required><br><br>
+    <input name="dia_chi" placeholder="Địa chỉ" required><br><br>
 
-<form id="orderForm">
-  <input type="text" name="ten" placeholder="Tên khách hàng" required>
-  <input type="text" name="sdt" placeholder="Số điện thoại" required>
-  <input type="text" name="dia_chi" placeholder="Địa chỉ" required>
-  <input type="text" name="san_pham" placeholder="Sản phẩm" required>
-  <input type="number" name="so_luong" placeholder="Số lượng" value="1" required>
+    <select name="san_pham">
+      <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+      <option value="iPhone 15">iPhone 15</option>
+    </select><br><br>
 
-  <button type="submit">Đặt hàng</button>
-</form>
+    <input name="so_luong" type="number" value="1" min="1"><br><br>
 
-<script>
-  const webhookURL = "https://quyendz123.app.n8n.cloud/webhook/dat-hang-iphone";
+    <button type="submit">Đặt hàng</button>
+  </form>
 
-  document.getElementById("orderForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+  <p id="result"></p>
 
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
-    data.thoi_gian = new Date().toLocaleString("vi-VN");
+  <script>
+    const webhookUrl = "https://quyen123.app.n8n.cloud/webhook/dat-hang-iphone";
 
-    await fetch(webhookURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+    document.getElementById("orderForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const data = {
+        ten: form.ten.value,
+        sdt: form.sdt.value,
+        dia_chi: form.dia_chi.value,
+        san_pham: form.san_pham.value,
+        so_luong: form.so_luong.value,
+        thoi_gian: new Date().toLocaleString("vi-VN")
+      };
+
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      document.getElementById("result").innerText =
+        res.ok ? "✅ Đặt hàng thành công!" : "❌ Lỗi gửi đơn hàng";
     });
-
-    alert("Đặt hàng thành công!");
-    e.target.reset();
-  });
-</script>
-
+  </script>
 </body>
 </html>
+
 
